@@ -1,0 +1,109 @@
+#include <cstdlib>
+#include <ctime>
+#include <iostream>
+using namespace std;
+
+// definicao do tipo no
+typedef struct no {
+  int valor;
+  struct no *esq;
+  struct no *dir;
+} Arv;
+
+// funcao que cria a arvore
+Arv *criaHeap() {
+  Arv *Heap = new Arv;
+  if (Heap != nullptr) {
+    Heap = nullptr;
+  }
+  return Heap;
+}
+
+// funcao que insere os valores na arvore
+Arv *inserir(Arv *heap, int i, int cont) {
+  if (heap == nullptr) {
+    Arv *aux = new Arv;
+    aux->valor = i;
+    aux->esq = nullptr;
+    aux->dir = nullptr;
+    return aux;
+  } else {
+    if (i < heap->valor) {
+      if (cont == 0) {
+        heap->esq = inserir(heap->esq, i, cont);
+        cont++;
+      }
+      if (cont == 1) {
+        heap->dir = inserir(heap->dir, i, cont);
+        cont--;
+      }
+    } else {
+      int aux = heap->valor;
+      heap->valor = i;
+      if (cont == 0) {
+        heap->esq = inserir(heap->esq, aux, cont);
+        cont++;
+      }
+      if (cont == 1) {
+        heap->dir = inserir(heap->dir, aux, cont);
+        cont--;
+      }
+    }
+    return heap;
+  }
+}
+
+// funcao que exclui os valores do heap
+void excluir(Arv *heap, int i) {
+  if (heap->valor != i) {
+    excluir(heap->esq, i);
+    excluir(heap->dir, i);
+  } else {
+    delete (heap);
+  }
+}
+
+// funcao que busca os valores do heap
+int busca(Arv *heap, int i, int cont) {
+  if (heap->valor == i) {
+    cont++;
+  } else {
+    if (heap->esq != nullptr) {
+      busca(heap->esq, i, cont);
+    }
+    if (heap->dir != nullptr) {
+      busca(heap->dir, i, cont);
+    }
+  }
+  return cont;
+}
+
+// funcao que imprime a arvore formatada
+void imprimirHeap(Arv *heap) {
+  cout << heap->valor << "; ";
+  if (heap->esq != nullptr) {
+    imprimirHeap(heap->esq);
+    return;
+  }
+  if (heap->dir != nullptr) {
+    imprimirHeap(heap->dir);
+    return;
+  }
+}
+
+int main() {
+  int valores[600];
+  srand(time(0));
+  // gerando valores para o vetor
+  for (int i = 0; i < 600; i++) {
+    valores[i] = 1 + rand() % 999;
+  }
+  // criando o heap
+  Arv *Heap = criaHeap();
+  // inserindo valores na heap
+  for (int i = 0; i < 600; i++) {
+    Heap = inserir(Heap, valores[i], 0);
+  }
+  imprimirHeap(Heap);
+  delete (Heap);
+}
